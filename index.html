@@ -141,8 +141,6 @@ Error message and password prompt
 
 <p>This <a class="tc-tiddlylink-external" href="https://tiddlywiki.com" rel="noopener noreferrer" target="_blank">TiddlyWiki</a> contains the following tiddlers:</p><p><ul>
 
-<li>$:/config/RelinkOnRename</li>
-
 <li>$:/core</li>
 
 <li>$:/GitHub/Filename</li>
@@ -183,7 +181,7 @@ Error message and password prompt
 
 <li>Draft of 'GettingStarted'</li>
 
-<li>Draft of 'ManyToOne2'</li>
+<li>Draft of 'ManyToOne'</li>
 
 <li>Draft of 'New Tiddler'</li>
 
@@ -193,7 +191,7 @@ Error message and password prompt
 
 <li>JPA</li>
 
-<li>ManyToOne2</li>
+<li>ManyToOne</li>
 
 <li>Saving TiddlyWiki on GitHub</li>
 
@@ -217,9 +215,6 @@ Error message and password prompt
 <!--~~ Ordinary tiddlers ~~-->
 
 <div id="storeArea" style="display:none;">
-<div created="20200813144743769" modified="20200813144743769" title="$:/config/RelinkOnRename">
-<pre>yes</pre>
-</div>
 <div author="JeremyRuston" core-version="&gt;=5.0.0" dependents="" description="TiddlyWiki5 core" list="readme" name="Core" plugin-priority="0" plugin-type="plugin" title="$:/core" type="application/json" version="5.1.22">
 <pre>{
     &quot;tiddlers&quot;: {
@@ -9632,7 +9627,7 @@ Error message and password prompt
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20200813144733448" list="[[Draft of 'ManyToOne2']] GettingStarted" modified="20200813144733448" title="$:/StoryList">
+<div created="20200813144758050" list="[[Draft of 'ManyToOne']] GettingStarted" modified="20200813144758050" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -9823,7 +9818,7 @@ Before you start storing important information in ~TiddlyWiki it is vital to mak
 See the [[control panel|$:/ControlPanel]] for more options.
 </pre>
 </div>
-<div created="20200813143410557" draft.of="ManyToOne2" draft.title="ManyToOne" modified="20200813143714640" tags="JPA" title="Draft of 'ManyToOne2'">
+<div created="20200813143410557" draft.of="ManyToOne" draft.title="ManyToOne" modified="20200813144912121" tags="JPA" title="Draft of 'ManyToOne'">
 <pre>```
 
 @Entity(name = &quot;PostComment&quot;)
@@ -9844,9 +9839,9 @@ public class PostComment {
 }
 ```
 
-The @JoinColumn annotation allows you to specify the Foreign Key column name. In our example, we can omit the @JoinColumn annotation since, by default, the Foreign Key column name is assumed to be formed by joining the @ManyToOne property and the parent entity identifier via the _ character.
+The @JoinColumn annotation allows you to specify the Foreign Key column name. In our example, we can omit the @JoinColumn annotation since, by default, the Foreign Key column name is assumed to be formed by joining the @ManyToOne property (&quot;post&quot;) and the parent entity identifier (&quot;id&quot;) via the _ character (see JPA spec for ManyToOne).
 
-Also, it’s very important to set the fetch strategy explicitly to FetchType.LAZY. By default, @ManyToOne associations use the FetchType.EAGER strategy, which can lead to N+1 query issues or fetching more data than necessary.</pre>
+Also, it’s very important to set the fetch strategy explicitly to FetchType.LAZY. By default, @ManyToOne associations use the ''FetchType.EAGER'' strategy, which can lead to N+1 query issues or fetching more data than necessary.</pre>
 </div>
 <div created="20200813142810843" draft.of="New Tiddler" draft.title="ManyToOne" modified="20200813143320519" tags="JPA" title="Draft of 'New Tiddler'">
 <pre>```
@@ -9879,8 +9874,30 @@ Also, it’s very important to set the fetch strategy explicitly to ''FetchType.
 <div created="20200813142220683" modified="20200813142230120" tags="TableOfContents" title="JPA">
 <pre></pre>
 </div>
-<div created="20200813143410557" modified="20200813143549971" tags="JPA" title="ManyToOne2">
-<pre></pre>
+<div created="20200813143410557" modified="20200813144545539" tags="JPA" title="ManyToOne">
+<pre>```
+
+@Entity(name = &quot;PostComment&quot;)
+@Table(name = &quot;post_comment&quot;)
+public class PostComment {
+ 
+    @Id
+    @GeneratedValue
+    private Long id;
+ 
+    private String review;
+ 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;post_id&quot;)
+    private Post post;
+     
+    //Getters and setters omitted for brevity
+}
+```
+
+The @JoinColumn annotation allows you to specify the Foreign Key column name. In our example, we can omit the @JoinColumn annotation since, by default, the Foreign Key column name is assumed to be formed by joining the @ManyToOne property and the parent entity identifier via the _ character.
+
+Also, it’s very important to set the fetch strategy explicitly to FetchType.LAZY. By default, @ManyToOne associations use the FetchType.EAGER strategy, which can lead to N+1 query issues or fetching more data than necessary.</pre>
 </div>
 <div created="20200712174102239" modified="20200712174959784" tags="TiddlyWiki" title="Saving TiddlyWiki on GitHub">
 <pre># From https://tiddlywiki.comI download an [[empty edition|https://tiddlywiki.com/prerelease/#Empty%20Edition]] and rename the //empty.html// downloaded to //index.html//
