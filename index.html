@@ -9904,7 +9904,7 @@ The @JoinColumn annotation allows you to specify the Foreign Key column name. In
 
 Also, it’s very important to set the fetch strategy explicitly to ''FetchType.LAZY''. By default, @ManyToOne associations use the ''FetchType.EAGER'' strategy, which can lead to N+1 query issues or fetching more data than necessary.</pre>
 </div>
-<div created="20200813172559226" modified="20200813172932880" tags="ManyToOne" title="Persisting a ManyToOne association with JPA and Hibernate">
+<div created="20200813172559226" modified="20200813172950287" tags="ManyToOne" title="Persisting a ManyToOne association with JPA and Hibernate">
 <pre>```
 entityManager.persist(
     new Post()
