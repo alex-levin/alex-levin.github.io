@@ -187,6 +187,8 @@ Error message and password prompt
 
 <li>Draft of 'New Tiddler'</li>
 
+<li>Draft of 'Persisting a ManyToOne association with JPA and Hibernate'</li>
+
 <li>Generics</li>
 
 <li>Java</li>
@@ -9634,7 +9636,7 @@ Error message and password prompt
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20200813173047654" list="[[Persisting a ManyToOne association with JPA and Hibernate]] GettingStarted" modified="20200813173047654" title="$:/StoryList">
+<div created="20200813173144007" list="[[Draft of 'Persisting a ManyToOne association with JPA and Hibernate']] GettingStarted" modified="20200813173144007" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -9870,6 +9872,81 @@ public class PostComment {
 The @JoinColumn annotation allows you to specify the Foreign Key column name. In our example, we can omit the @JoinColumn annotation since, by default, the Foreign Key column name is assumed to be formed by joining the @ManyToOne property (&quot;post&quot;) and the parent entity identifier (&quot;id&quot;) via the _ character (&quot;post_id&quot;) (see JPA spec 11.1.25 JoinColumn Annotation).
 Also, it’s very important to set the fetch strategy explicitly to ''FetchType.LAZY''. By default, @ManyToOne associations use the FetchType.EAGER strategy, which can lead to N+1 query issues or fetching more data than necessary.</pre>
 </div>
+<div created="20200813172559226" draft.of="Persisting a ManyToOne association with JPA and Hibernate" draft.title="Persisting a ManyToOne association with JPA and Hibernate" modified="20200813173152981" tags="ManyToOne" title="Draft of 'Persisting a ManyToOne association with JPA and Hibernate'">
+<pre>```
+entityManager.persist(
+    new Post()
+        .setId(1L)
+        .setTitle(&quot;High-Performance Java Persistence&quot;)
+);
+```
+A common mistake developers do when persisting child entities is to fetch the parent entity using find:
+
+```
+Post post = postRepository.findById(1L);
+ 
+commentRepository.save(
+    new PostComment()
+        .setId(1L)
+        .setReview(&quot;Amazing book!&quot;)
+        .setPost(post)
+);
+```
+When persisting the PostComment entity while using the find method, Hibernate will execute the following SQL statements:
+```
+SELECT
+    p.id AS id1_0_0_,
+    p.title AS title2_0_0_
+FROM post p
+WHERE p.id=1
+ 
+INSERT INTO post_comment (
+    post_id,
+    review, id
+)
+VALUES (
+    1,
+    'Amazing book!',
+    1
+)
+```
+The SELECT query is not needed since we are not interested in fetching the Post entity. All we want is to set the post_id Foreign Key column.
+So, instead of find, you need to use getReference:
+```
+Post post = entityManager.getReference(Post.class, 1L);
+ 
+entityManager.persist(
+    new PostComment()
+        .setId(1L)
+        .setReview(&quot;Amazing book!&quot;)
+        .setPost(post)
+);
+```
+Or, the getOne method if you’re using Spring Data JPA:
+```
+Post post = postRepository.getOne(1L);
+commentRepository.save(
+    new PostComment()
+        .setId(1L)
+        .setReview(&quot;Amazing book!&quot;)
+        .setPost(post)
+);
+```
+It’s unfortunate that the JpaRepository method is called getOne and not findProxyById, as it would be much easier for developers to guess its purpose.
+
+Now, Hibernate doesn’t need to execute the SELECT statement:
+```
+INSERT INTO post_comment (
+    post_id,
+    review, id
+)
+VALUES (
+    1,
+    'Amazing book!',
+    1
+)
+```</pre>
+</div>
 <div created="20200712173219279" modified="20200712173226086" tags="Java" title="Generics">
 <pre></pre>
 </div>
@@ -9904,7 +9981,7 @@ The @JoinColumn annotation allows you to specify the Foreign Key column name. In
 
 Also, it’s very important to set the fetch strategy explicitly to ''FetchType.LAZY''. By default, @ManyToOne associations use the ''FetchType.EAGER'' strategy, which can lead to N+1 query issues or fetching more data than necessary.</pre>
 </div>
-<div created="20200813172559226" modified="20200813173118454" tags="ManyToOne" title="Persisting a ManyToOne association with JPA and Hibernate">
+<div created="20200813172559226" modified="20200813172950287" tags="ManyToOne" title="Persisting a ManyToOne association with JPA and Hibernate">
 <pre>```
 entityManager.persist(
     new Post()
@@ -9912,8 +9989,7 @@ entityManager.persist(
         .setTitle(&quot;High-Performance Java Persistence&quot;)
 );
 ```
-A common mistake developers do when persisting child entities is to fetch the parent entity using find: 
-
+A common mistake developers do when persisting child entities is to fetch the parent entity using find:
 ```
 Post post = postRepository.findById(1L);
  
