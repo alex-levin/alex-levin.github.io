@@ -143,9 +143,9 @@ Error message and password prompt
 
 <li>@ManyToOne</li>
 
-<li>$:/core</li>
+<li>@OneToMany with @JoinColumn</li>
 
-<li>$:/Import</li>
+<li>$:/core</li>
 
 <li>$:/isEncrypted</li>
 
@@ -175,23 +175,15 @@ Error message and password prompt
 
 <li>$:/themes/tiddlywiki/vanilla/metrics/fontsize</li>
 
-<li>Bidirectional @OneToMany with @JoinColumn relationship</li>
-
-<li>Bidirectional @OneToMany with mappedBy attribute</li>
-
-<li>Draft of 'Bidirectional @OneToMany with mappedBy attribute'</li>
+<li>Bidirectional @OneToMany</li>
 
 <li>JPA</li>
-
-<li>Mapping collections</li>
 
 <li>Orphan Removal</li>
 
 <li>TableOfContents</li>
 
 <li>Unidirectional @OneToMany</li>
-
-<li>Unidirectional @OneToMany with @JoinColumn</li>
 
 </ul>
 </p>
@@ -245,6 +237,54 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 ```
 
 </pre>
+</div>
+<div created="20200816214621940" modified="20200816215101379" tags="JPA" title="@OneToMany with @JoinColumn">
+<pre>JPA 2.0 added support for mapping the @OneToMany association with a @JoinColumn so that it
+can map the one-to-many table relationship. With the @JoinColumn, the @OneToMany association
+controls the child table foreign key, so there is no need for a junction table.
+On the JPA side, the class diagram is identical to the aforementioned unidirectional @OneToMany
+relationship, and the only difference is the JPA mapping which takes the additional ''@JoinColumn'':
+
+```
+@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+@JoinColumn(name = &quot;post_id&quot;)
+private List&lt;PostComment&gt; comments = new ArrayList&lt;&gt;();
+```
+When adding three PostComment entities, Hibernate generates the following SQL statements:
+
+```
+post.getComments().add(new PostComment(&quot;My first review&quot;));
+post.getComments().add(new PostComment(&quot;My second review&quot;));
+post.getComments().add(new PostComment(&quot;My third review&quot;));
+INSERT INTO post_comment (review, id) VALUES ('My first review', 2)
+INSERT INTO post_comment (review, id) VALUES ('My second review', 3)
+INSERT INTO post_comment (review, id) VALUES ('My third review', 4)
+UPDATE post_comment SET post_id = 1 WHERE id = 2
+UPDATE post_comment SET post_id = 1 WHERE id = 3
+UPDATE post_comment SET post_id = 1 WHERE id = 4
+```
+Besides the regular insert statements, Hibernate issues three update statements for setting
+the post_id column on the newly inserted child records. The update statements are generated
+by the Hibernate-internal CollectionRecreateAction which tries to preserve the element order
+whenever the collection state changes. In this particular case, the CollectionRecreateAction
+should not be scheduled for execution, however, as of writing (Hibernate 5.2.3), this issue still
+replicates.
+
+When deleting the element of the collection:
+
+```
+post.getComments().remove(2);
+```
+Hibernate generates the following SQL statements:
+
+```
+UPDATE post_comment SET post_id = null WHERE post_id = 1 AND id = 4
+DELETE from post_comment WHERE id = 4
+```
+Again, there is an additional update statement associated with the child removal operation.
+When a child entity is removed from the parent-side collection, Hibernate sets the child table
+foreign key column to null. Afterward, the orphan removal logic kicks in, and it triggers a
+delete statement against the disassociated child entity.</pre>
 </div>
 <div author="JeremyRuston" core-version="&gt;=5.0.0" dependents="" description="TiddlyWiki5 core" list="readme" name="Core" plugin-priority="0" plugin-type="plugin" title="$:/core" type="application/json" version="5.1.22">
 <pre>{
@@ -9619,16 +9659,6 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
     }
 }</pre>
 </div>
-<div plugin-type="import" status="pending" title="$:/Import" type="application/json">
-<pre>{
-    &quot;tiddlers&quot;: {
-        &quot;Untitled&quot;: {
-            &quot;title&quot;: &quot;Untitled&quot;,
-            &quot;text&quot;: &quot;New Tiddler&quot;
-        }
-    }
-}</pre>
-</div>
 <div title="$:/isEncrypted">
 <pre>no</pre>
 </div>
@@ -9650,7 +9680,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20200816221404228" list="$:/Import JPA [[Mapping collections]] [[Draft of 'Bidirectional @OneToMany with mappedBy attribute']] [[Bidirectional @OneToMany with @JoinColumn relationship]] GettingStarted" modified="20200816222140660" title="$:/StoryList">
+<div created="20200816211317500" list="JPA [[@OneToMany with @JoinColumn]] [[Unidirectional @OneToMany]] GettingStarted" modified="20200816214619012" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -9829,66 +9859,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div created="20200816200705020" modified="20200816200705891" title="$:/themes/tiddlywiki/vanilla/metrics/fontsize">
 <pre>12px</pre>
 </div>
-<div created="20200816215131845" modified="20200816221300429" tags="JPA" title="Bidirectional @OneToMany with @JoinColumn relationship">
-<pre>The @OneToMany with @JoinColumn association can also be turned into a bidirectional relationship,
-but it requires instructing the child-side to avoid any ''insert'' and ''update'' synchronization:
-
-```
-@ManyToOne
-@JoinColumn(name = &quot;post_id&quot;, insertable = false, updatable = false)
-private Post post;
-
-@Entity
-public class Post {
-        @Id
-        @GeneratedValue
-        private Long id;
-
-        private String title;
-
-        @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-        @JoinColumn(name = &quot;post_id&quot;)
-        private List&lt;PostComment&gt; comments = new ArrayList&lt;&gt;();
-
-@Entity
-public class PostComment {
-        @Id
-        @GeneratedValue
-        private Long id;
-
-        private String review;
-
-        @ManyToOne
-        @JoinColumn(name = &quot;post_id&quot;, insertable = false, updatable = false)
-        private Post post;
-
-    
-Post post = new Post(&quot;First post&quot;);  
-entityManager.persist(post);
-
-PostComment comment1 = new PostComment(&quot;My first review&quot;);    
-post.addComment(comment1);     
-PostComment comment2 = new PostComment(&quot;My second review&quot;);          
-post.addComment(comment2);
-
-entityManager.persist(post);         
-entityManager.flush();
-           
-post.removeComment(comment1);        
-entityManager.flush();
-
-insert into post_comment (review, id) values (?, ?)&quot;], Params:[(My first review, 2)] 
-insert into post_comment (review, id) values (?, ?)&quot;], Params:[(My second review, 3)] 
-update post_comment set post_id=? where id=?&quot;], Params:[(1, 2)]
-update post_comment set post_id=? where id=?&quot;], Params:[(1, 3)]
-update post_comment set post_id=null where post_id=? and id=?&quot;], Params:[(1, 2)]
-delete from post_comment where id=?&quot;], Params:[(2)]
-```
-The redundant update statements are generated for both the unidirectional and the
-bidirectional (with @JoinColumn) association, so the most efficient foreign key mapping is the @ManyToOne
-association. If using @OneToMany, bidirectional @OneToMany relationship must define the mappedBy attribute, indicating that it only mirrors the @ManyToOne child-side mapping. In this case, the key mapping is done by the @ManyToOne association.</pre>
-</div>
-<div created="20200816202211657" modified="20200816220738101" tags="JPA" title="Bidirectional @OneToMany with mappedBy attribute">
+<div created="20200816202211657" modified="20200816203603059" tags="JPA" title="Bidirectional @OneToMany">
 <pre>The child-side @ManyToOne association is in charge of keeping the foreign key column value in sync with the in-memory Persistence Context. This is the reason why the bidirectional @OneToMany relationship must define the ''mappedBy'' attribute, indicating that it only mirrors the @ManyToOne child-side mapping.
 
 ```
@@ -9957,124 +9928,8 @@ targeted child entity:
 DELETE FROM post_comment WHERE id = 2
 ```</pre>
 </div>
-<div created="20200816202211657" draft.of="Bidirectional @OneToMany with mappedBy attribute" draft.title="Bidirectional @OneToMany with mappedBy attribute" modified="20200816221708668" tags="JPA" title="Draft of 'Bidirectional @OneToMany with mappedBy attribute'">
-<pre>The child-side @ManyToOne association is in charge of keeping the foreign key column value in sync with the in-memory Persistence Context. This is the reason why the bidirectional @OneToMany relationship must define the ''mappedBy'' attribute, indicating that it only mirrors the @ManyToOne child-side mapping.
-
-```
-    @Entity(name = &quot;Post&quot;)
-    @Table(name = &quot;post&quot;)
-    public class Post {
-        @Id
-        private Long id;
-        private String title;
-        @OneToMany(mappedBy = &quot;post&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
-        private List&lt;PostComment&gt; comments = new ArrayList&lt;&gt;();
-
-    @Entity(name = &quot;PostComment&quot;)
-    @Table(name = &quot;post_comment&quot;)
-    public class PostComment {
-        @Id
-        @GeneratedValue
-        private Long id;
-        private String review;
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = &quot;post_id&quot;)
-        private Post post;
-```
-Even if the child-side is in charge of synchronizing the entity state changes with the
-database foreign key column value, a bidirectional association must always have both
-the parent-side and the child-side in sync.
-To synchronize both ends, it is practical to provide parent-side (the Post entity) helper methods that add/remove
-child entities.
-
-```
-public class Post {
-    ...
-    public void addComment(PostComment comment) {
-        comments.add(comment);
-        comment.setPost(this);
-    }
-    public void removeComment(PostComment comment) {
-        comments.remove(comment);
-        comment.setPost(null);
-    }
-```
-One of the major advantages of using a bidirectional association is that entity state transitions
-can be cascaded from the parent entity to its children. In the following example, when
-persisting the parent Post entity, all the PostComment child entities are persisted as well.
-
-```
-Post post = new Post(&quot;First post&quot;);
-PostComment comment1 = new PostComment(&quot;My first review&quot;);
-post.addComment(comment1);
-PostComment comment2 = new PostComment(&quot;My second review&quot;);
-post.addComment(comment2);
-entityManager.persist(post);
-INSERT INTO post (title, id) VALUES ('First post', 1)
-INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My first review', 2)
-INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My second review', 3)
-```
-When removing a comment from the parent-side collection:
-
-```
-post.removeComment(comment1);
-```
-The orphan removal attribute instructs Hibernate to generate a delete DML statement on the
-targeted child entity:
-
-```
-DELETE FROM post_comment WHERE id = 2
-```
-
-The bidirectional @OneToMany association generates efficient DML statements because
-the @ManyToOne mapping is in charge of the table relationship. Because it simplifies data
-access operations as well, the bidirectional @OneToMany association is worth considering
-when the size of the child records is relatively low.</pre>
-</div>
 <div created="20200816195811703" modified="20200816195851643" tags="TableOfContents" title="JPA">
 <pre></pre>
-</div>
-<div created="20200816222145749" modified="20200816222845083" tags="JPA" title="Mapping collections">
-<pre>In a relational database, all table relationships are constructed using foreign keys and navigated through SQL queries. JPA allows mapping both the foreign key side (the child entity
-has a reference to its parent), as well as the parent side (the parent entity has one or more
-child entities).
-
-Although @OneToMany, @ManyToMany or @ElementCollection are convenient from a data access
-perspective (entity state transitions can be cascaded from parent entities to children), they
-are definitely not free of cost. The price for reducing data access operations is paid in terms
-of result set fetching flexibility and performance. A JPA collection, either of entities or value
-types (basic or embeddables), binds a parent entity to a query that usually fetches all the
-associated child records. Because of this, the entity mapping becomes sensitive to the number
-of child entries.
-
-If the children count is relatively small, the performance impact of always retrieving all child
-entities might be unnoticeable. However, if the number of child records grows too large,
-fetching the entire children collection may become a performance bottleneck. Unfortunately,
-the entity mapping is done during the early phases of a project development, and the
-development team might be unaware of the number of child records a production system
-exhibits.
-
-Not just the mere size can be problematic, but also the number of attributes of the child entity.
-Because entities are usually fetched as a whole, the result set is, therefore, proportional to the
-number of columns the child table contains. Even if a collection is fetched lazily, Hibernate
-might still require to fully load each entity when the collection is accessed for the first time.
-
-''Although Hibernate supports extra lazy collection fetching, this is only a workaround and
-does not address the root problem.''
-
-Alternatively, every collection mapping can be replaced by a ''data access query'', which can use
-a SQL projection that is tailored to the data requirements of each business use case. This way,
-the query can take business case specific filtering criteria. Although JPA 2.1 does not support
-dynamic collection filtering, Hibernate offers Persistence Context-bound collection Filters.
-
-When handling large data sets, it is good practice to limit the result set size, both
-for UI (to increase responsiveness) or batch processing tasks (to avoid long running
-transactions). ''Just because JPA supports collection mapping, it does not mean they are
-mandatory for every domain model mapping. Until there is a clear understanding of
-the number of child records (or if there is even need to fetch child entities entirely), it
-is better to postpone the collection mapping decision.'' 
-
-For high-performance systems, a ''data access query is often a much more flexible alternative''. It also provides support for pagination of the child entities retrieved from the database.</pre>
 </div>
 <div created="20200816203737122" modified="20200816205826076" tags="JPA" title="Orphan Removal">
 <pre>```
@@ -10193,54 +10048,6 @@ remaining in-memory records are added back again. The problem with this approach
 that instead of a single junction table remove operation, the database has way more DML
 statements to execute.
 </pre>
-</div>
-<div created="20200816214621940" modified="20200816215201813" tags="JPA" title="Unidirectional @OneToMany with @JoinColumn">
-<pre>JPA 2.0 added support for mapping the @OneToMany association with a @JoinColumn so that it
-can map the one-to-many table relationship. With the @JoinColumn, the @OneToMany association
-controls the child table foreign key, so there is no need for a junction table.
-On the JPA side, the class diagram is identical to the aforementioned unidirectional @OneToMany
-relationship, and the only difference is the JPA mapping which takes the additional ''@JoinColumn'':
-
-```
-@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-@JoinColumn(name = &quot;post_id&quot;)
-private List&lt;PostComment&gt; comments = new ArrayList&lt;&gt;();
-```
-When adding three PostComment entities, Hibernate generates the following SQL statements:
-
-```
-post.getComments().add(new PostComment(&quot;My first review&quot;));
-post.getComments().add(new PostComment(&quot;My second review&quot;));
-post.getComments().add(new PostComment(&quot;My third review&quot;));
-INSERT INTO post_comment (review, id) VALUES ('My first review', 2)
-INSERT INTO post_comment (review, id) VALUES ('My second review', 3)
-INSERT INTO post_comment (review, id) VALUES ('My third review', 4)
-UPDATE post_comment SET post_id = 1 WHERE id = 2
-UPDATE post_comment SET post_id = 1 WHERE id = 3
-UPDATE post_comment SET post_id = 1 WHERE id = 4
-```
-Besides the regular insert statements, Hibernate issues three update statements for setting
-the post_id column on the newly inserted child records. The update statements are generated
-by the Hibernate-internal CollectionRecreateAction which tries to preserve the element order
-whenever the collection state changes. In this particular case, the CollectionRecreateAction
-should not be scheduled for execution, however, as of writing (Hibernate 5.2.3), this issue still
-replicates.
-
-When deleting the element of the collection:
-
-```
-post.getComments().remove(2);
-```
-Hibernate generates the following SQL statements:
-
-```
-UPDATE post_comment SET post_id = null WHERE post_id = 1 AND id = 4
-DELETE from post_comment WHERE id = 4
-```
-Again, there is an additional update statement associated with the child removal operation.
-When a child entity is removed from the parent-side collection, Hibernate sets the child table
-foreign key column to null. Afterward, the orphan removal logic kicks in, and it triggers a
-delete statement against the disassociated child entity.</pre>
 </div>
 
 

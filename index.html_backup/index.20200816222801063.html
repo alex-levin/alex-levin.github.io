@@ -10034,7 +10034,7 @@ when the size of the child records is relatively low.</pre>
 <div created="20200816195811703" modified="20200816195851643" tags="TableOfContents" title="JPA">
 <pre></pre>
 </div>
-<div created="20200816222145749" modified="20200816222845083" tags="JPA" title="Mapping collections">
+<div created="20200816222145749" modified="20200816222757987" tags="JPA" title="Mapping collections">
 <pre>In a relational database, all table relationships are constructed using foreign keys and navigated through SQL queries. JPA allows mapping both the foreign key side (the child entity
 has a reference to its parent), as well as the parent side (the parent entity has one or more
 child entities).
@@ -10070,9 +10070,9 @@ dynamic collection filtering, Hibernate offers Persistence Context-bound collect
 When handling large data sets, it is good practice to limit the result set size, both
 for UI (to increase responsiveness) or batch processing tasks (to avoid long running
 transactions). ''Just because JPA supports collection mapping, it does not mean they are
-mandatory for every domain model mapping. Until there is a clear understanding of
+mandatory for every domain model mapping''. Until there is a clear understanding of
 the number of child records (or if there is even need to fetch child entities entirely), it
-is better to postpone the collection mapping decision.'' 
+is better to postpone the collection mapping decision. 
 
 For high-performance systems, a ''data access query is often a much more flexible alternative''. It also provides support for pagination of the child entities retrieved from the database.</pre>
 </div>
