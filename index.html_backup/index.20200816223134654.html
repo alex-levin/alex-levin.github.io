@@ -179,13 +179,13 @@ Error message and password prompt
 
 <li>Bidirectional @OneToMany with mappedBy attribute</li>
 
+<li>Draft of 'Bidirectional @OneToMany with mappedBy attribute'</li>
+
 <li>JPA</li>
 
 <li>Mapping collections</li>
 
 <li>Orphan Removal</li>
-
-<li>Relationships</li>
 
 <li>TableOfContents</li>
 
@@ -207,7 +207,7 @@ Error message and password prompt
 <!--~~ Ordinary tiddlers ~~-->
 
 <div id="storeArea" style="display:none;">
-<div created="20200816200138017" modified="20200816223730099" tags="Relationships" title="@ManyToOne">
+<div created="20200816200138017" modified="20200816202310098" tags="JPA" title="@ManyToOne">
 <pre>''Most efficient''
 
 ```
@@ -9650,7 +9650,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20200816223402860" list="[[Unidirectional @OneToMany with @JoinColumn]] [[Unidirectional @OneToMany]] [[Orphan Removal]] [[Mapping collections]] [[Bidirectional @OneToMany with mappedBy attribute]] [[Bidirectional @OneToMany with @JoinColumn relationship]] @ManyToOne JPA Relationships GettingStarted" modified="20200816223837539" title="$:/StoryList">
+<div created="20200816222857828" list="JPA [[Mapping collections]] GettingStarted" modified="20200816223117187" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -9711,7 +9711,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
     }
 }</pre>
 </div>
-<div created="20200816194759097" modified="20200816223745835" title="$:/temp/NewTagName">
+<div created="20200816194759097" modified="20200816195849547" title="$:/temp/NewTagName">
 <pre></pre>
 </div>
 <div author="JeremyRuston" core-version="&gt;=5.0.0" dependents="$:/themes/tiddlywiki/vanilla" description="Emphasises individual tiddlers" name="Snow White" plugin-priority="0" plugin-type="theme" title="$:/themes/tiddlywiki/snowwhite" type="application/json" version="5.1.22">
@@ -9829,7 +9829,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div created="20200816200705020" modified="20200816200705891" title="$:/themes/tiddlywiki/vanilla/metrics/fontsize">
 <pre>12px</pre>
 </div>
-<div created="20200816215131845" modified="20200816223749211" tags="Relationships" title="Bidirectional @OneToMany with @JoinColumn relationship">
+<div created="20200816215131845" modified="20200816221300429" tags="JPA" title="Bidirectional @OneToMany with @JoinColumn relationship">
 <pre>The @OneToMany with @JoinColumn association can also be turned into a bidirectional relationship,
 but it requires instructing the child-side to avoid any ''insert'' and ''update'' synchronization:
 
@@ -9888,7 +9888,76 @@ The redundant update statements are generated for both the unidirectional and th
 bidirectional (with @JoinColumn) association, so the most efficient foreign key mapping is the @ManyToOne
 association. If using @OneToMany, bidirectional @OneToMany relationship must define the mappedBy attribute, indicating that it only mirrors the @ManyToOne child-side mapping. In this case, the key mapping is done by the @ManyToOne association.</pre>
 </div>
-<div created="20200816202211657" modified="20200816223801203" tags="Relationships" title="Bidirectional @OneToMany with mappedBy attribute">
+<div created="20200816202211657" modified="20200816220738101" tags="JPA" title="Bidirectional @OneToMany with mappedBy attribute">
+<pre>The child-side @ManyToOne association is in charge of keeping the foreign key column value in sync with the in-memory Persistence Context. This is the reason why the bidirectional @OneToMany relationship must define the ''mappedBy'' attribute, indicating that it only mirrors the @ManyToOne child-side mapping.
+
+```
+    @Entity(name = &quot;Post&quot;)
+    @Table(name = &quot;post&quot;)
+    public class Post {
+        @Id
+        private Long id;
+        private String title;
+        @OneToMany(mappedBy = &quot;post&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+        private List&lt;PostComment&gt; comments = new ArrayList&lt;&gt;();
+
+    @Entity(name = &quot;PostComment&quot;)
+    @Table(name = &quot;post_comment&quot;)
+    public class PostComment {
+        @Id
+        @GeneratedValue
+        private Long id;
+        private String review;
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = &quot;post_id&quot;)
+        private Post post;
+```
+Even if the child-side is in charge of synchronizing the entity state changes with the
+database foreign key column value, a bidirectional association must always have both
+the parent-side and the child-side in sync.
+To synchronize both ends, it is practical to provide parent-side (the Post entity) helper methods that add/remove
+child entities.
+
+```
+public class Post {
+    ...
+    public void addComment(PostComment comment) {
+        comments.add(comment);
+        comment.setPost(this);
+    }
+    public void removeComment(PostComment comment) {
+        comments.remove(comment);
+        comment.setPost(null);
+    }
+```
+One of the major advantages of using a bidirectional association is that entity state transitions
+can be cascaded from the parent entity to its children. In the following example, when
+persisting the parent Post entity, all the PostComment child entities are persisted as well.
+
+```
+Post post = new Post(&quot;First post&quot;);
+PostComment comment1 = new PostComment(&quot;My first review&quot;);
+post.addComment(comment1);
+PostComment comment2 = new PostComment(&quot;My second review&quot;);
+post.addComment(comment2);
+entityManager.persist(post);
+INSERT INTO post (title, id) VALUES ('First post', 1)
+INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My first review', 2)
+INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My second review', 3)
+```
+When removing a comment from the parent-side collection:
+
+```
+post.removeComment(comment1);
+```
+The orphan removal attribute instructs Hibernate to generate a delete DML statement on the
+targeted child entity:
+
+```
+DELETE FROM post_comment WHERE id = 2
+```</pre>
+</div>
+<div created="20200816202211657" draft.of="Bidirectional @OneToMany with mappedBy attribute" draft.title="Bidirectional @OneToMany with mappedBy attribute" modified="20200816221708668" tags="JPA" title="Draft of 'Bidirectional @OneToMany with mappedBy attribute'">
 <pre>The child-side @ManyToOne association is in charge of keeping the foreign key column value in sync with the in-memory Persistence Context. This is the reason why the bidirectional @OneToMany relationship must define the ''mappedBy'' attribute, indicating that it only mirrors the @ManyToOne child-side mapping.
 
 ```
@@ -9965,7 +10034,7 @@ when the size of the child records is relatively low.</pre>
 <div created="20200816195811703" modified="20200816223128131" tags="TableOfContents" title="JPA">
 <pre>https://github.com/alex-levin/high-performance-java-persistence</pre>
 </div>
-<div created="20200816222145749" modified="20200816223813155" tags="Relationships" title="Mapping collections">
+<div created="20200816222145749" modified="20200816222845083" tags="JPA" title="Mapping collections">
 <pre>In a relational database, all table relationships are constructed using foreign keys and navigated through SQL queries. JPA allows mapping both the foreign key side (the child entity
 has a reference to its parent), as well as the parent side (the parent entity has one or more
 child entities).
@@ -10007,7 +10076,7 @@ is better to postpone the collection mapping decision.''
 
 For high-performance systems, a ''data access query is often a much more flexible alternative''. It also provides support for pagination of the child entities retrieved from the database.</pre>
 </div>
-<div created="20200816203737122" modified="20200816223825731" tags="Relationships" title="Orphan Removal">
+<div created="20200816203737122" modified="20200816205826076" tags="JPA" title="Orphan Removal">
 <pre>```
 public class Post {
     ...
@@ -10066,11 +10135,6 @@ public class Post {
 ```
 </pre>
 </div>
-<div created="20200816223604805" modified="20200816223644523" tags="JPA" title="Relationships">
-<pre>Code:
-
-high-performance-java-persistence\core\src\test\java\com\vladmihalcea\book\hpjp\hibernate\association</pre>
-</div>
 <div caption="Contents" created="20200816194657786" list-before="$:/core/ui/SideBar/Open" modified="20200816195019121" tags="$:/tags/SideBar" title="TableOfContents">
 <pre>&lt;div class=&quot;tc-table-of-contents&quot;&gt;
 
@@ -10078,7 +10142,7 @@ high-performance-java-persistence\core\src\test\java\com\vladmihalcea\book\hpjp\
 
 &lt;/div&gt;</pre>
 </div>
-<div created="20200816205917821" modified="20200816223836019" tags="Relationships" title="Unidirectional @OneToMany">
+<div created="20200816205917821" modified="20200816214537795" tags="JPA" title="Unidirectional @OneToMany">
 <pre>The unidirectional @OneToMany relationship is ''less efficient'' both for reading data (three
 joins are required instead of two), as for adding (two tables must be written instead of
 one) or removing (entries are removed and added back again) child entries.
@@ -10130,7 +10194,7 @@ that instead of a single junction table remove operation, the database has way m
 statements to execute.
 </pre>
 </div>
-<div created="20200816214621940" modified="20200816223847138" tags="Relationships" title="Unidirectional @OneToMany with @JoinColumn">
+<div created="20200816214621940" modified="20200816215201813" tags="JPA" title="Unidirectional @OneToMany with @JoinColumn">
 <pre>JPA 2.0 added support for mapping the @OneToMany association with a @JoinColumn so that it
 can map the one-to-many table relationship. With the @JoinColumn, the @OneToMany association
 controls the child table foreign key, so there is no need for a junction table.

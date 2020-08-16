@@ -9650,7 +9650,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20200816223402860" list="[[Unidirectional @OneToMany with @JoinColumn]] [[Unidirectional @OneToMany]] [[Orphan Removal]] [[Mapping collections]] [[Bidirectional @OneToMany with mappedBy attribute]] [[Bidirectional @OneToMany with @JoinColumn relationship]] @ManyToOne JPA Relationships GettingStarted" modified="20200816223837539" title="$:/StoryList">
+<div created="20200816223402860" list="[[Orphan Removal]] [[Mapping collections]] [[Bidirectional @OneToMany with mappedBy attribute]] [[Bidirectional @OneToMany with @JoinColumn relationship]] @ManyToOne JPA Relationships GettingStarted" modified="20200816223815131" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -10078,7 +10078,7 @@ high-performance-java-persistence\core\src\test\java\com\vladmihalcea\book\hpjp\
 
 &lt;/div&gt;</pre>
 </div>
-<div created="20200816205917821" modified="20200816223836019" tags="Relationships" title="Unidirectional @OneToMany">
+<div created="20200816205917821" modified="20200816214537795" tags="JPA" title="Unidirectional @OneToMany">
 <pre>The unidirectional @OneToMany relationship is ''less efficient'' both for reading data (three
 joins are required instead of two), as for adding (two tables must be written instead of
 one) or removing (entries are removed and added back again) child entries.
@@ -10130,7 +10130,7 @@ that instead of a single junction table remove operation, the database has way m
 statements to execute.
 </pre>
 </div>
-<div created="20200816214621940" modified="20200816223847138" tags="Relationships" title="Unidirectional @OneToMany with @JoinColumn">
+<div created="20200816214621940" modified="20200816215201813" tags="JPA" title="Unidirectional @OneToMany with @JoinColumn">
 <pre>JPA 2.0 added support for mapping the @OneToMany association with a @JoinColumn so that it
 can map the one-to-many table relationship. With the @JoinColumn, the @OneToMany association
 controls the child table foreign key, so there is no need for a junction table.
