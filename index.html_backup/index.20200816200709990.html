@@ -167,8 +167,6 @@ Error message and password prompt
 
 <li>$:/themes/tiddlywiki/vanilla</li>
 
-<li>$:/themes/tiddlywiki/vanilla/metrics/bodyfontsize</li>
-
 <li>$:/themes/tiddlywiki/vanilla/metrics/fontsize</li>
 
 <li>JPA</li>
@@ -9585,7 +9583,7 @@ Error message and password prompt
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20200816200830721" list="ManyToOne GettingStarted" modified="20200816200853409" title="$:/StoryList">
+<div created="20200816200545720" list="$:/ControlPanel ManyToOne GettingStarted" modified="20200816200619664" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -9758,25 +9756,23 @@ Error message and password prompt
     }
 }</pre>
 </div>
-<div created="20200816200841422" modified="20200816200841472" title="$:/themes/tiddlywiki/vanilla/metrics/bodyfontsize">
-<pre>12px</pre>
-</div>
 <div created="20200816200705020" modified="20200816200705891" title="$:/themes/tiddlywiki/vanilla/metrics/fontsize">
 <pre>12px</pre>
 </div>
 <div created="20200816195811703" modified="20200816195851643" tags="TableOfContents" title="JPA">
 <pre></pre>
 </div>
-<div created="20200816200138017" modified="20200816201357768" tags="JPA" title="ManyToOne">
-<pre>''Most efficient''
-
-```
+<div created="20200816200138017" modified="20200816200532611" tags="JPA" title="ManyToOne">
+<pre>```
     @Entity(name = &quot;PostComment&quot;)
     @Table(name = &quot;post_comment&quot;)
     public static class PostComment {
+
         @Id
         private Long id;
+
         private String review;
+
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = &quot;post_id&quot;)
         private Post post;
@@ -9789,20 +9785,6 @@ Error message and password prompt
         private Long id;
         private String title;
         // getters and setters
-```
-''Persist PostComment''
-
-```
-Post post = entityManager.find(Post.class, 1L);
-PostComment comment = new PostComment(&quot;My review&quot;);
-comment.setPost(post);
-entityManager.persist(comment);
-```
-''Hibernate generates insert statement''
-
-```
-INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
-```
 
 </pre>
 </div>

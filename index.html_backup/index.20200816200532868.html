@@ -145,15 +145,11 @@ Error message and password prompt
 
 <li>$:/isEncrypted</li>
 
-<li>$:/state/tab--1963855381</li>
-
 <li>$:/state/tab-1749438307</li>
 
 <li>$:/state/tab-2065006209</li>
 
 <li>$:/state/tab/sidebar--595412856</li>
-
-<li>$:/state/toc/TableOfContents-JPA--118161433</li>
 
 <li>$:/status/RequireReloadDueToPluginChange</li>
 
@@ -166,10 +162,6 @@ Error message and password prompt
 <li>$:/themes/tiddlywiki/snowwhite</li>
 
 <li>$:/themes/tiddlywiki/vanilla</li>
-
-<li>$:/themes/tiddlywiki/vanilla/metrics/bodyfontsize</li>
-
-<li>$:/themes/tiddlywiki/vanilla/metrics/fontsize</li>
 
 <li>JPA</li>
 
@@ -9567,11 +9559,8 @@ Error message and password prompt
 <div title="$:/isEncrypted">
 <pre>no</pre>
 </div>
-<div created="20200816200646768" modified="20200816200651551" title="$:/state/tab--1963855381">
-<pre>$:/themes/tiddlywiki/vanilla/themetweaks</pre>
-</div>
-<div created="20200816194724863" modified="20200816200635183" title="$:/state/tab-1749438307">
-<pre>$:/core/ui/ControlPanel/Appearance</pre>
+<div created="20200816194724863" modified="20200816194724863" title="$:/state/tab-1749438307">
+<pre>$:/core/ui/ControlPanel/Saving</pre>
 </div>
 <div created="20200816194726519" modified="20200816194726519" title="$:/state/tab-2065006209">
 <pre>$:/core/ui/ControlPanel/Saving/GitHub</pre>
@@ -9579,13 +9568,10 @@ Error message and password prompt
 <div created="20200816195004136" modified="20200816195853707" title="$:/state/tab/sidebar--595412856">
 <pre>TableOfContents</pre>
 </div>
-<div created="20200816200544448" modified="20200816200544448" title="$:/state/toc/TableOfContents-JPA--118161433">
-<pre>open</pre>
-</div>
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20200816200830721" list="ManyToOne GettingStarted" modified="20200816200853409" title="$:/StoryList">
+<div created="20200816195957785" list="JPA ManyToOne GettingStarted" modified="20200816195957785" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -9758,25 +9744,20 @@ Error message and password prompt
     }
 }</pre>
 </div>
-<div created="20200816200841422" modified="20200816200841472" title="$:/themes/tiddlywiki/vanilla/metrics/bodyfontsize">
-<pre>12px</pre>
-</div>
-<div created="20200816200705020" modified="20200816200705891" title="$:/themes/tiddlywiki/vanilla/metrics/fontsize">
-<pre>12px</pre>
-</div>
 <div created="20200816195811703" modified="20200816195851643" tags="TableOfContents" title="JPA">
 <pre></pre>
 </div>
-<div created="20200816200138017" modified="20200816201357768" tags="JPA" title="ManyToOne">
-<pre>''Most efficient''
-
-```
+<div created="20200816200138017" modified="20200816200532611" tags="JPA" title="ManyToOne">
+<pre>```
     @Entity(name = &quot;PostComment&quot;)
     @Table(name = &quot;post_comment&quot;)
     public static class PostComment {
+
         @Id
         private Long id;
+
         private String review;
+
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = &quot;post_id&quot;)
         private Post post;
@@ -9789,20 +9770,6 @@ Error message and password prompt
         private Long id;
         private String title;
         // getters and setters
-```
-''Persist PostComment''
-
-```
-Post post = entityManager.find(Post.class, 1L);
-PostComment comment = new PostComment(&quot;My review&quot;);
-comment.setPost(post);
-entityManager.persist(comment);
-```
-''Hibernate generates insert statement''
-
-```
-INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
-```
 
 </pre>
 </div>
