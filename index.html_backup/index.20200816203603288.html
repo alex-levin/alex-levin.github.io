@@ -177,11 +177,7 @@ Error message and password prompt
 
 <li>JPA</li>
 
-<li>Orphan Removal</li>
-
 <li>TableOfContents</li>
-
-<li>Unidirectional @OneToMany</li>
 
 </ul>
 </p>
@@ -9630,7 +9626,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20200816200830721" list="@ManyToOne JPA [[Unidirectional @OneToMany]] [[Orphan Removal]] [[Bidirectional @OneToMany]] GettingStarted" modified="20200816202256737" title="$:/StoryList">
+<div created="20200816200830721" list="@ManyToOne JPA [[Bidirectional @OneToMany]] GettingStarted" modified="20200816202256737" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -9881,74 +9877,12 @@ DELETE FROM post_comment WHERE id = 2
 <div created="20200816195811703" modified="20200816195851643" tags="TableOfContents" title="JPA">
 <pre></pre>
 </div>
-<div created="20200816203737122" modified="20200816205826076" tags="JPA" title="Orphan Removal">
-<pre>```
-public class Post {
-    ...
-    public void removeComment(PostComment comment) {
-        comments.remove(comment);
-        comment.setPost(null);
-    }
-```
-The orphan removal attribute instructs Hibernate to generate a delete DML statement on the
-targeted child entity:
-
-```
-DELETE FROM post_comment WHERE id = 2
-```
-The helper method for the child entity removal relies on the underlying child object equality
-for matching the collection entry that needs to be removed.
-If the application developer does not choose to override the default equals and hashCode
-methods, the java.lang.Object identity-based equality is going to be used. 
-
-```
-@Entity
-public class PostComment {
-    private String createdBy;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdOn = new Date();
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        PostComment that = (PostComment) o;
-        return Objects.equals(createdBy, that.createdBy) &amp;&amp;
-            Objects.equals(createdOn, that.createdOn);
-    }
-    @Override
-    public int hashCode() {
-        return Objects.hash(createdBy, createdOn);
-    }
-
-@Entity
-public class Post {
-    @Id @GeneratedValue
-    private Long id;
-    //Getters and setters omitted for brevity
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Post)) return false;
-        return Objects.equals(id, ((Post) o).getId());
-    }
-    @Override
-    public int hashCode() {
-    return Objects.hash(id);
-    }
-}
-```
-</pre>
-</div>
 <div caption="Contents" created="20200816194657786" list-before="$:/core/ui/SideBar/Open" modified="20200816195019121" tags="$:/tags/SideBar" title="TableOfContents">
 <pre>&lt;div class=&quot;tc-table-of-contents&quot;&gt;
 
 &lt;&lt;toc-selective-expandable 'TableOfContents'&gt;&gt;
 
 &lt;/div&gt;</pre>
-</div>
-<div created="20200816205917821" modified="20200816205922476" tags="JPA" title="Unidirectional @OneToMany">
-<pre></pre>
 </div>
 
 

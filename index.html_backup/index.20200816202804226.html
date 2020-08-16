@@ -177,11 +177,7 @@ Error message and password prompt
 
 <li>JPA</li>
 
-<li>Orphan Removal</li>
-
 <li>TableOfContents</li>
-
-<li>Unidirectional @OneToMany</li>
 
 </ul>
 </p>
@@ -9630,7 +9626,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20200816200830721" list="@ManyToOne JPA [[Unidirectional @OneToMany]] [[Orphan Removal]] [[Bidirectional @OneToMany]] GettingStarted" modified="20200816202256737" title="$:/StoryList">
+<div created="20200816200830721" list="@ManyToOne JPA [[Bidirectional @OneToMany]] GettingStarted" modified="20200816202256737" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -9809,9 +9805,8 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div created="20200816200705020" modified="20200816200705891" title="$:/themes/tiddlywiki/vanilla/metrics/fontsize">
 <pre>12px</pre>
 </div>
-<div created="20200816202211657" modified="20200816203603059" tags="JPA" title="Bidirectional @OneToMany">
+<div created="20200816202211657" modified="20200816202803874" tags="JPA" title="Bidirectional @OneToMany">
 <pre>The child-side @ManyToOne association is in charge of keeping the foreign key column value in sync with the in-memory Persistence Context. This is the reason why the bidirectional @OneToMany relationship must define the ''mappedBy'' attribute, indicating that it only mirrors the @ManyToOne child-side mapping.
-
 ```
     @Entity(name = &quot;Post&quot;)
     @Table(name = &quot;post&quot;)
@@ -9819,7 +9814,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
         @Id
         private Long id;
         private String title;
-        @OneToMany(mappedBy = &quot;post&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
+        @OneToMany(''mappedBy'' = &quot;post&quot;, cascade = CascadeType.ALL, orphanRemoval = true)
         private List&lt;PostComment&gt; comments = new ArrayList&lt;&gt;();
 
     @Entity(name = &quot;PostComment&quot;)
@@ -9832,113 +9827,10 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = &quot;post_id&quot;)
         private Post post;
-```
-Even if the child-side is in charge of synchronizing the entity state changes with the
-database foreign key column value, a bidirectional association must always have both
-the parent-side and the child-side in sync.
-To synchronize both ends, it is practical to provide parent-side (the Post entity) helper methods that add/remove
-child entities.
-
-```
-public class Post {
-    ...
-    public void addComment(PostComment comment) {
-        comments.add(comment);
-        comment.setPost(this);
-    }
-    public void removeComment(PostComment comment) {
-        comments.remove(comment);
-        comment.setPost(null);
-    }
-```
-One of the major advantages of using a bidirectional association is that entity state transitions
-can be cascaded from the parent entity to its children. In the following example, when
-persisting the parent Post entity, all the PostComment child entities are persisted as well.
-
-```
-Post post = new Post(&quot;First post&quot;);
-PostComment comment1 = new PostComment(&quot;My first review&quot;);
-post.addComment(comment1);
-PostComment comment2 = new PostComment(&quot;My second review&quot;);
-post.addComment(comment2);
-entityManager.persist(post);
-INSERT INTO post (title, id) VALUES ('First post', 1)
-INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My first review', 2)
-INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My second review', 3)
-```
-When removing a comment from the parent-side collection:
-
-```
-post.removeComment(comment1);
-```
-The orphan removal attribute instructs Hibernate to generate a delete DML statement on the
-targeted child entity:
-
-```
-DELETE FROM post_comment WHERE id = 2
 ```</pre>
 </div>
 <div created="20200816195811703" modified="20200816195851643" tags="TableOfContents" title="JPA">
 <pre></pre>
-</div>
-<div created="20200816203737122" modified="20200816205826076" tags="JPA" title="Orphan Removal">
-<pre>```
-public class Post {
-    ...
-    public void removeComment(PostComment comment) {
-        comments.remove(comment);
-        comment.setPost(null);
-    }
-```
-The orphan removal attribute instructs Hibernate to generate a delete DML statement on the
-targeted child entity:
-
-```
-DELETE FROM post_comment WHERE id = 2
-```
-The helper method for the child entity removal relies on the underlying child object equality
-for matching the collection entry that needs to be removed.
-If the application developer does not choose to override the default equals and hashCode
-methods, the java.lang.Object identity-based equality is going to be used. 
-
-```
-@Entity
-public class PostComment {
-    private String createdBy;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdOn = new Date();
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        PostComment that = (PostComment) o;
-        return Objects.equals(createdBy, that.createdBy) &amp;&amp;
-            Objects.equals(createdOn, that.createdOn);
-    }
-    @Override
-    public int hashCode() {
-        return Objects.hash(createdBy, createdOn);
-    }
-
-@Entity
-public class Post {
-    @Id @GeneratedValue
-    private Long id;
-    //Getters and setters omitted for brevity
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Post)) return false;
-        return Objects.equals(id, ((Post) o).getId());
-    }
-    @Override
-    public int hashCode() {
-    return Objects.hash(id);
-    }
-}
-```
-</pre>
 </div>
 <div caption="Contents" created="20200816194657786" list-before="$:/core/ui/SideBar/Open" modified="20200816195019121" tags="$:/tags/SideBar" title="TableOfContents">
 <pre>&lt;div class=&quot;tc-table-of-contents&quot;&gt;
@@ -9946,9 +9838,6 @@ public class Post {
 &lt;&lt;toc-selective-expandable 'TableOfContents'&gt;&gt;
 
 &lt;/div&gt;</pre>
-</div>
-<div created="20200816205917821" modified="20200816205922476" tags="JPA" title="Unidirectional @OneToMany">
-<pre></pre>
 </div>
 
 
