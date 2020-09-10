@@ -161,8 +161,6 @@ Error message and password prompt
 
 <li>$:/state/toc/TableOfContents-JPA--118161433</li>
 
-<li>$:/state/toc/TableOfContents-Spring--118161433</li>
-
 <li>$:/state/toc/TableOfContents/JPA-Relationships--118161433</li>
 
 <li>$:/status/RequireReloadDueToPluginChange</li>
@@ -185,8 +183,6 @@ Error message and password prompt
 
 <li>Bidirectional @OneToMany with mappedBy attribute</li>
 
-<li>Dependency Injection</li>
-
 <li>Don't expose your JPA entities in your REST API</li>
 
 <li>Draft of 'Hibernate 1st Level Cache'</li>
@@ -202,10 +198,6 @@ Error message and password prompt
 <li>Orphan Removal</li>
 
 <li>Relationships</li>
-
-<li>Repository vs CrudRepository</li>
-
-<li>Spring</li>
 
 <li>TableOfContents</li>
 
@@ -9652,8 +9644,8 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div title="$:/isEncrypted">
 <pre>no</pre>
 </div>
-<div created="20200829192403102" modified="20200910215926980" title="$:/state/sidebar">
-<pre>yes</pre>
+<div created="20200829192403102" modified="20200829194353111" title="$:/state/sidebar">
+<pre>no</pre>
 </div>
 <div created="20200816200646768" modified="20200816200651551" title="$:/state/tab--1963855381">
 <pre>$:/themes/tiddlywiki/vanilla/themetweaks</pre>
@@ -9670,16 +9662,13 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div created="20200816200544448" modified="20200816200544448" title="$:/state/toc/TableOfContents-JPA--118161433">
 <pre>open</pre>
 </div>
-<div created="20200910215835941" modified="20200910215934413" title="$:/state/toc/TableOfContents-Spring--118161433">
-<pre>open</pre>
-</div>
 <div created="20200829173354775" modified="20200829194222919" title="$:/state/toc/TableOfContents/JPA-Relationships--118161433">
 <pre>close</pre>
 </div>
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20200910215852356" list="Spring [[Repository vs CrudRepository]] [[Dependency Injection]] GettingStarted" modified="20200910215852356" title="$:/StoryList">
+<div created="20200829180821993" list="[[Don't expose your JPA entities in your REST API]] JPA [[Draft of 'Hibernate 1st Level Cache']] GettingStarted" modified="20200829180821993" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -9852,8 +9841,8 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
     }
 }</pre>
 </div>
-<div created="20200816200841422" modified="20200910215903938" title="$:/themes/tiddlywiki/vanilla/metrics/bodyfontsize">
-<pre>12px</pre>
+<div created="20200816200841422" modified="20200829174113271" title="$:/themes/tiddlywiki/vanilla/metrics/bodyfontsize">
+<pre>14px</pre>
 </div>
 <div created="20200816200705020" modified="20200829174106825" title="$:/themes/tiddlywiki/vanilla/metrics/fontsize">
 <pre>14x</pre>
@@ -9990,25 +9979,6 @@ The bidirectional @OneToMany association generates efficient DML statements beca
 the @ManyToOne mapping is in charge of the table relationship. Because it simplifies data
 access operations as well, the bidirectional @OneToMany association is worth considering
 when the size of the child records is relatively low.</pre>
-</div>
-<div created="20200910215743874" modified="20200910215758076" tags="Spring" title="Dependency Injection">
-<pre>As of Spring Framework 4.3, an @Autowired annotation on such a constructor is no longer necessary if the target bean defines only one constructor.
-
-https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-autowired-annotation
-
-
-```
-@Controller
-class OwnerController {
-    private static final String VIEWS_OWNER_CREATE_OR_UPDATE_FORM = &quot;owners/createOrUpdateOwnerForm&quot;;
-    private final OwnerRepository owners;
-    private VisitRepository visits;
-    public OwnerController(OwnerRepository clinicService, VisitRepository visits) {
-        this.owners = clinicService;
-	this.visits = visits;
-}
-```
-</pre>
 </div>
 <div created="20200829194217520" modified="20200829194506424" tags="JPA" title="Don't expose your JPA entities in your REST API">
 <pre>https://e5g4c4d6.rocketcdn.me/wp-content/uploads/member-access/library/cheatSheets/DontExposeEntitiesInApi.pdf
@@ -10409,27 +10379,6 @@ public class Post {
 <pre>Code:
 
 high-performance-java-persistence\core\src\test\java\com\vladmihalcea\book\hpjp\hibernate\association</pre>
-</div>
-<div created="20200910220024325" modified="20200910220053085" tags="Spring" title="Repository vs CrudRepository">
-<pre>From clinic-petstore:
-
-```
-public interface VisitRepository extends Repository&lt;Visit, Integer&gt; {
-    void save(Visit visit) throws DataAccessException;
-    List&lt;Visit&gt; findByPetId(Integer petId);
-}
-```
-Why/when to use CrudReposotory if Repository also works?
-
-See https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/repository/Repository.html:
-
-Domain repositories extending the Repository interface can selectively expose CRUD methods by simply declaring methods of the same signature as those declared in CrudRepository.
-
-Here, only two CrudRepository methods are exposed: save and findBy.
-</pre>
-</div>
-<div created="20200910215658872" modified="20200910215830805" tags="TableOfContents" title="Spring">
-<pre></pre>
 </div>
 <div caption="Contents" created="20200816194657786" list-before="$:/core/ui/SideBar/Open" modified="20200816195019121" tags="$:/tags/SideBar" title="TableOfContents">
 <pre>&lt;div class=&quot;tc-table-of-contents&quot;&gt;

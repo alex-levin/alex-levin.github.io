@@ -161,8 +161,6 @@ Error message and password prompt
 
 <li>$:/state/toc/TableOfContents-JPA--118161433</li>
 
-<li>$:/state/toc/TableOfContents-Spring--118161433</li>
-
 <li>$:/state/toc/TableOfContents/JPA-Relationships--118161433</li>
 
 <li>$:/status/RequireReloadDueToPluginChange</li>
@@ -185,8 +183,6 @@ Error message and password prompt
 
 <li>Bidirectional @OneToMany with mappedBy attribute</li>
 
-<li>Dependency Injection</li>
-
 <li>Don't expose your JPA entities in your REST API</li>
 
 <li>Draft of 'Hibernate 1st Level Cache'</li>
@@ -202,10 +198,6 @@ Error message and password prompt
 <li>Orphan Removal</li>
 
 <li>Relationships</li>
-
-<li>Repository vs CrudRepository</li>
-
-<li>Spring</li>
 
 <li>TableOfContents</li>
 
@@ -9652,7 +9644,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div title="$:/isEncrypted">
 <pre>no</pre>
 </div>
-<div created="20200829192403102" modified="20200910215926980" title="$:/state/sidebar">
+<div created="20200829192403102" modified="20200829194206799" title="$:/state/sidebar">
 <pre>yes</pre>
 </div>
 <div created="20200816200646768" modified="20200816200651551" title="$:/state/tab--1963855381">
@@ -9670,16 +9662,13 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div created="20200816200544448" modified="20200816200544448" title="$:/state/toc/TableOfContents-JPA--118161433">
 <pre>open</pre>
 </div>
-<div created="20200910215835941" modified="20200910215934413" title="$:/state/toc/TableOfContents-Spring--118161433">
-<pre>open</pre>
-</div>
 <div created="20200829173354775" modified="20200829194222919" title="$:/state/toc/TableOfContents/JPA-Relationships--118161433">
 <pre>close</pre>
 </div>
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20200910215852356" list="Spring [[Repository vs CrudRepository]] [[Dependency Injection]] GettingStarted" modified="20200910215852356" title="$:/StoryList">
+<div created="20200829180821993" list="[[Don't expose your JPA entities in your REST API]] JPA [[Draft of 'Hibernate 1st Level Cache']] GettingStarted" modified="20200829180821993" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -9852,8 +9841,8 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
     }
 }</pre>
 </div>
-<div created="20200816200841422" modified="20200910215903938" title="$:/themes/tiddlywiki/vanilla/metrics/bodyfontsize">
-<pre>12px</pre>
+<div created="20200816200841422" modified="20200829174113271" title="$:/themes/tiddlywiki/vanilla/metrics/bodyfontsize">
+<pre>14px</pre>
 </div>
 <div created="20200816200705020" modified="20200829174106825" title="$:/themes/tiddlywiki/vanilla/metrics/fontsize">
 <pre>14x</pre>
@@ -9991,43 +9980,20 @@ the @ManyToOne mapping is in charge of the table relationship. Because it simpli
 access operations as well, the bidirectional @OneToMany association is worth considering
 when the size of the child records is relatively low.</pre>
 </div>
-<div created="20200910215743874" modified="20200910215758076" tags="Spring" title="Dependency Injection">
-<pre>As of Spring Framework 4.3, an @Autowired annotation on such a constructor is no longer necessary if the target bean defines only one constructor.
-
-https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-autowired-annotation
-
-
-```
-@Controller
-class OwnerController {
-    private static final String VIEWS_OWNER_CREATE_OR_UPDATE_FORM = &quot;owners/createOrUpdateOwnerForm&quot;;
-    private final OwnerRepository owners;
-    private VisitRepository visits;
-    public OwnerController(OwnerRepository clinicService, VisitRepository visits) {
-        this.owners = clinicService;
-	this.visits = visits;
-}
-```
-</pre>
-</div>
-<div created="20200829194217520" modified="20200829194506424" tags="JPA" title="Don't expose your JPA entities in your REST API">
+<div created="20200829194217520" modified="20200829194348304" tags="JPA" title="Don't expose your JPA entities in your REST API">
 <pre>https://e5g4c4d6.rocketcdn.me/wp-content/uploads/member-access/library/cheatSheets/DontExposeEntitiesInApi.pdf
 
 Should you expose your entities in your REST API, or should you
 prefer a DTO projection?
-
 That’s one of the most commonly asked questions when I’m talking to
 developers or when I’m coaching teams who are working on a new
 application.
-
 There are two main reasons for these questions and all the
 discussions that arise from them:
-
 1. Entities are POJOs. It often seems like they can get easily
 serialized and deserialized to JSON documents. If it really works
 that easily, the implementation of your REST endpoints would
 become pretty simple.
-
 2. Exposing your entities creates a strong coupling between your
 API and your persistence model. Any difference between the 2
 models introduces extra complexity, and you need to find a way
@@ -10035,7 +10001,6 @@ to bridge the gap between them. Unfortunately, there are
 always differences between your API and your persistence
 model. The most obvious ones are the handling of associations
 between your entities.
-
 There is an obvious conflict. It seems like exposing entities makes
 implementing your use cases easier, but it also introduces new
 problems. So, what has a bigger impact on your implementation? And
@@ -10047,33 +10012,28 @@ your API makes it impossible to fulfill a few best practices when
 designing your API; it reduces the readability of your entity classes,
 slows down your application, and makes it hard to implement a true
 REST architecture.
-
 You can avoid all of these issues by designing DTO classes, which you
 then serialize and deserialize on your API. That requires you to
 implement a mapping between the DTOs and your internal data
 structures. But that’s worth it if you consider all the downsides of
 exposing entities in your API.
-
+Don't expose your JPA entities in your REST API
+www.thoughts-on-java.org
 Reason 1: Hide implementation details
-
 As a general best practice, your API shouldn’t expose any
 implementation details of your application. The structure that you
 use to persist your data is such a detail.
 If you do it anyways, every change of your REST API will affect your
 entity model and vice versa. That means your API and your persistence
 layer can no longer evolve independently of each other.
-
 Reason 2: Don’t bloat your entities with additional
 annotations
-
 Most entity mappings already require several annotations. Adding
 additional ones for your JSON mapping makes the entity classes even
 harder to understand. Better keep it simple and separate the entity
 class from the class you use to serialize and deserialize your JSON
 documents.
-
 Reason 3: Different handling of associations
-
 With JPA and Hibernate, you typically use managed associations that
 are represented by an entity attribute. Depending on the configured
 fetch type and your query, this association either references other
@@ -10085,13 +10045,12 @@ include id references.
 Links and id references provide a similar challenge: You need to
 handle them during serialization and deserialization. That requires
 additional queries that slow down your application.
-
+Don't expose your JPA entities in your REST API
+www.thoughts-on-java.org
 Excluding associations creates problems when you merge a
 deserialized entity object. The association attribute is set to null and
 Hibernate removes all associations from the database.
-
 Reason 4: Design your APIs
-
 If you’re not implementing a very simple CRUD operation, your
 clients will most likely benefit from carefully designed responses
 which use different representations of the same graph of entities.
@@ -10099,9 +10058,7 @@ Creating these different representations based on use case specific
 DTO classes is pretty simple. But doing the same based on a graph of
 entity objects is much harder and most likely requires some manual
 mappings.
-
 Reason 5: Support multiple versions of your API
-
 Supporting multiple versions of an API is much easier if you’re
 exposing DTOs. That separates the persistence layer from your API,
 and you can introduce a migration layer to your application. This
@@ -10409,27 +10366,6 @@ public class Post {
 <pre>Code:
 
 high-performance-java-persistence\core\src\test\java\com\vladmihalcea\book\hpjp\hibernate\association</pre>
-</div>
-<div created="20200910220024325" modified="20200910220053085" tags="Spring" title="Repository vs CrudRepository">
-<pre>From clinic-petstore:
-
-```
-public interface VisitRepository extends Repository&lt;Visit, Integer&gt; {
-    void save(Visit visit) throws DataAccessException;
-    List&lt;Visit&gt; findByPetId(Integer petId);
-}
-```
-Why/when to use CrudReposotory if Repository also works?
-
-See https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/repository/Repository.html:
-
-Domain repositories extending the Repository interface can selectively expose CRUD methods by simply declaring methods of the same signature as those declared in CrudRepository.
-
-Here, only two CrudRepository methods are exposed: save and findBy.
-</pre>
-</div>
-<div created="20200910215658872" modified="20200910215830805" tags="TableOfContents" title="Spring">
-<pre></pre>
 </div>
 <div caption="Contents" created="20200816194657786" list-before="$:/core/ui/SideBar/Open" modified="20200816195019121" tags="$:/tags/SideBar" title="TableOfContents">
 <pre>&lt;div class=&quot;tc-table-of-contents&quot;&gt;

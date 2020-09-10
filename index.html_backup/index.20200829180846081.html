@@ -149,8 +149,6 @@ Error message and password prompt
 
 <li>$:/isEncrypted</li>
 
-<li>$:/state/sidebar</li>
-
 <li>$:/state/tab--1963855381</li>
 
 <li>$:/state/tab-1749438307</li>
@@ -160,8 +158,6 @@ Error message and password prompt
 <li>$:/state/tab/sidebar--595412856</li>
 
 <li>$:/state/toc/TableOfContents-JPA--118161433</li>
-
-<li>$:/state/toc/TableOfContents-Spring--118161433</li>
 
 <li>$:/state/toc/TableOfContents/JPA-Relationships--118161433</li>
 
@@ -185,14 +181,6 @@ Error message and password prompt
 
 <li>Bidirectional @OneToMany with mappedBy attribute</li>
 
-<li>Dependency Injection</li>
-
-<li>Don't expose your JPA entities in your REST API</li>
-
-<li>Draft of 'Hibernate 1st Level Cache'</li>
-
-<li>Entities or DTOs – When should you use which projection?</li>
-
 <li>Hibernate 1st Level Cache</li>
 
 <li>JPA</li>
@@ -202,10 +190,6 @@ Error message and password prompt
 <li>Orphan Removal</li>
 
 <li>Relationships</li>
-
-<li>Repository vs CrudRepository</li>
-
-<li>Spring</li>
 
 <li>TableOfContents</li>
 
@@ -9652,9 +9636,6 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div title="$:/isEncrypted">
 <pre>no</pre>
 </div>
-<div created="20200829192403102" modified="20200910215926980" title="$:/state/sidebar">
-<pre>yes</pre>
-</div>
 <div created="20200816200646768" modified="20200816200651551" title="$:/state/tab--1963855381">
 <pre>$:/themes/tiddlywiki/vanilla/themetweaks</pre>
 </div>
@@ -9670,16 +9651,13 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div created="20200816200544448" modified="20200816200544448" title="$:/state/toc/TableOfContents-JPA--118161433">
 <pre>open</pre>
 </div>
-<div created="20200910215835941" modified="20200910215934413" title="$:/state/toc/TableOfContents-Spring--118161433">
-<pre>open</pre>
-</div>
-<div created="20200829173354775" modified="20200829194222919" title="$:/state/toc/TableOfContents/JPA-Relationships--118161433">
+<div created="20200829173354775" modified="20200829180819759" title="$:/state/toc/TableOfContents/JPA-Relationships--118161433">
 <pre>close</pre>
 </div>
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20200910215852356" list="Spring [[Repository vs CrudRepository]] [[Dependency Injection]] GettingStarted" modified="20200910215852356" title="$:/StoryList">
+<div created="20200829180821993" list="JPA [[Hibernate 1st Level Cache]] GettingStarted" modified="20200829180821993" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -9852,8 +9830,8 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
     }
 }</pre>
 </div>
-<div created="20200816200841422" modified="20200910215903938" title="$:/themes/tiddlywiki/vanilla/metrics/bodyfontsize">
-<pre>12px</pre>
+<div created="20200816200841422" modified="20200829174113271" title="$:/themes/tiddlywiki/vanilla/metrics/bodyfontsize">
+<pre>14px</pre>
 </div>
 <div created="20200816200705020" modified="20200829174106825" title="$:/themes/tiddlywiki/vanilla/metrics/fontsize">
 <pre>14x</pre>
@@ -9991,313 +9969,6 @@ the @ManyToOne mapping is in charge of the table relationship. Because it simpli
 access operations as well, the bidirectional @OneToMany association is worth considering
 when the size of the child records is relatively low.</pre>
 </div>
-<div created="20200910215743874" modified="20200910215758076" tags="Spring" title="Dependency Injection">
-<pre>As of Spring Framework 4.3, an @Autowired annotation on such a constructor is no longer necessary if the target bean defines only one constructor.
-
-https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-autowired-annotation
-
-
-```
-@Controller
-class OwnerController {
-    private static final String VIEWS_OWNER_CREATE_OR_UPDATE_FORM = &quot;owners/createOrUpdateOwnerForm&quot;;
-    private final OwnerRepository owners;
-    private VisitRepository visits;
-    public OwnerController(OwnerRepository clinicService, VisitRepository visits) {
-        this.owners = clinicService;
-	this.visits = visits;
-}
-```
-</pre>
-</div>
-<div created="20200829194217520" modified="20200829194506424" tags="JPA" title="Don't expose your JPA entities in your REST API">
-<pre>https://e5g4c4d6.rocketcdn.me/wp-content/uploads/member-access/library/cheatSheets/DontExposeEntitiesInApi.pdf
-
-Should you expose your entities in your REST API, or should you
-prefer a DTO projection?
-
-That’s one of the most commonly asked questions when I’m talking to
-developers or when I’m coaching teams who are working on a new
-application.
-
-There are two main reasons for these questions and all the
-discussions that arise from them:
-
-1. Entities are POJOs. It often seems like they can get easily
-serialized and deserialized to JSON documents. If it really works
-that easily, the implementation of your REST endpoints would
-become pretty simple.
-
-2. Exposing your entities creates a strong coupling between your
-API and your persistence model. Any difference between the 2
-models introduces extra complexity, and you need to find a way
-to bridge the gap between them. Unfortunately, there are
-always differences between your API and your persistence
-model. The most obvious ones are the handling of associations
-between your entities.
-
-There is an obvious conflict. It seems like exposing entities makes
-implementing your use cases easier, but it also introduces new
-problems. So, what has a bigger impact on your implementation? And
-are there any other problems that might not be that obvious?
-I have seen both approaches in several projects, and over the years,
-I’ve formed a pretty strong opinion on this. Even though it’s tempting
-to expose your entities, you should avoid it. Exposing your entities at
-your API makes it impossible to fulfill a few best practices when
-designing your API; it reduces the readability of your entity classes,
-slows down your application, and makes it hard to implement a true
-REST architecture.
-
-You can avoid all of these issues by designing DTO classes, which you
-then serialize and deserialize on your API. That requires you to
-implement a mapping between the DTOs and your internal data
-structures. But that’s worth it if you consider all the downsides of
-exposing entities in your API.
-
-Reason 1: Hide implementation details
-
-As a general best practice, your API shouldn’t expose any
-implementation details of your application. The structure that you
-use to persist your data is such a detail.
-If you do it anyways, every change of your REST API will affect your
-entity model and vice versa. That means your API and your persistence
-layer can no longer evolve independently of each other.
-
-Reason 2: Don’t bloat your entities with additional
-annotations
-
-Most entity mappings already require several annotations. Adding
-additional ones for your JSON mapping makes the entity classes even
-harder to understand. Better keep it simple and separate the entity
-class from the class you use to serialize and deserialize your JSON
-documents.
-
-Reason 3: Different handling of associations
-
-With JPA and Hibernate, you typically use managed associations that
-are represented by an entity attribute. Depending on the configured
-fetch type and your query, this association either references other
-entity objects or dynamically created proxy objects or a Hibernatespecific List or Set implementation.
-In your REST API, you handle these associations differently. The
-correct way would be to provide a link for each association. But most
-teams decide to either not model the associations at all or to only
-include id references.
-Links and id references provide a similar challenge: You need to
-handle them during serialization and deserialization. That requires
-additional queries that slow down your application.
-
-Excluding associations creates problems when you merge a
-deserialized entity object. The association attribute is set to null and
-Hibernate removes all associations from the database.
-
-Reason 4: Design your APIs
-
-If you’re not implementing a very simple CRUD operation, your
-clients will most likely benefit from carefully designed responses
-which use different representations of the same graph of entities.
-Creating these different representations based on use case specific
-DTO classes is pretty simple. But doing the same based on a graph of
-entity objects is much harder and most likely requires some manual
-mappings.
-
-Reason 5: Support multiple versions of your API
-
-Supporting multiple versions of an API is much easier if you’re
-exposing DTOs. That separates the persistence layer from your API,
-and you can introduce a migration layer to your application. This
-layer separates all the operations required to map the calls from your
-old API to the new one. That allows you to provide a simple and
-efficient implementation of your current API. And whenever you
-deactivate the old API, you can remove the migration layer.</pre>
-</div>
-<div created="20200829180827666" draft.of="Hibernate 1st Level Cache" draft.title="Hibernate 1st Level Cache" modified="20200829181126599" tags="JPA" title="Draft of 'Hibernate 1st Level Cache'">
-<pre>When Hibernate does use it?
-* For EntityManager.find()
-* To traverse relationships
-
-```
-Author a = this.em.find(Author.class, 1L);
-a.getBooks()
-```
-* But not for any Query!</pre>
-</div>
-<div created="20200829190850874" modified="20200829192856128" tags="JPA" title="Entities or DTOs – When should you use which projection?">
-<pre>https://thorben-janssen.com/entities-dtos-use-projection/
-
-Your persistence context manages the entities. That is a great thing when you want to update an entity. You just need to call a setter method with the new value. Hibernate will take care of the required SQL statements and write the changes to the database.
-
-Entity projections are great for all write operations. Hibernate and any other JPA implementation manages the state of your entities and creates the required SQL statements to persist your changes in the database. That makes the implementation of most create, update and remove operations very easy and efficient.
-
-```
-EntityManager em = emf.createEntityManager();
-em.getTransaction().begin();
- 
-Author a = em.find(Author.class, 1L);
-a.setFirstName(&quot;Thorben&quot;);
- 
-em.getTransaction().commit();
-em.close();
-```
-But read-only operations should be handled differently. Hibernate doesn’t need to manage any states or perform dirty checks if you just want to read some data from the database.
-
-So, from a theoretical point of view, DTOs should be the better projection for reading your data. But does it make a real difference?
-
-I did a small performance test to answer this question.
-
-```
-@Entity
-public class Author {
- 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = &quot;id&quot;, updatable = false, nullable = false)
-    private Long id;
- 
-    @Version
-    private int version;
- 
-    private String firstName;
- 
-    private String lastName;
-     
-    @OneToMany(mappedBy = &quot;author&quot;)
-    private List bookList = new ArrayList();
- 
-    ...
-}
-```
-To make sure that Hibernate doesn’t fetch any extra data, I set the FetchType for the @ManyToOne association on the Book entity to LAZY. You can read more about the different FetchTypes and their effect in my Introduction to JPA FetchTypes.
-
-```
-@Entity
-public class Book {
-     
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = &quot;id&quot;, updatable = false, nullable = false)
-    private Long id;
- 
-    @Version
-    private int version;
- 
-    private String title;
-     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = &quot;fk_author&quot;)
-    private Author author;
- 
-    ...
-}
-```
-I created a test database with 10 Authors. Each of them wrote 10 Books. So the database contains 100 Books in total.
-
-In each test, I will use a different projection to select all 100 Books and measure the time required to execute the query and the transaction. To reduce the impact of any side-effects, I do this 1000 times and measure the average time.
-
-Entity projections are the most popular ones in most applications. You already have the entity and JPA makes it easy to use them as a projection.
-
-So, let’s run this small test case and measure how long it takes to retrieve 100 Book entities.
-
-```
-long timeTx = 0;
-long timeQuery = 0;
-long iterations = 1000;
-// Perform 1000 iterations
-for (int i = 0; i &lt; iterations; i++) {
-    EntityManager em = emf.createEntityManager();
- 
-    long startTx = System.currentTimeMillis();
-    em.getTransaction().begin();
- 
-    // Execute Query
-    long startQuery = System.currentTimeMillis();
-    List&lt;Book&gt; books = em.createQuery(&quot;SELECT b FROM Book b&quot;).getResultList();
-    long endQuery = System.currentTimeMillis();
-    timeQuery += endQuery - startQuery;
- 
-    em.getTransaction().commit();
-    long endTx = System.currentTimeMillis();
- 
-    em.close();
-    timeTx += endTx - startTx;
-}
-System.out.println(&quot;Transaction: total &quot; + timeTx + &quot; per iteration &quot; + timeTx / (double)iterations);
-System.out.println(&quot;Query: total &quot; + timeQuery + &quot; per iteration &quot; + timeQuery / (double)iterations);
-```
-Transaction: total 2890 per iteration 2.89
-Query: total 2000 per iteration 2.0
-
-''The Effect Of The Default FetchType For To-One Associations''
-
-When I showed you the Book entity, I pointed out that I set the FetchType to LAZY to avoid additional queries. By default, the FetchtType of a to-one association is EAGER which tells Hibernate to initialize the association immediately.
-
-That requires additional queries and has a huge performance impact if your query selects multiple entities. Let’s change the Book entity to use the default FetchType and perform the same test.
-
-```
-@Entity
-public class Book {
-     
-    @ManyToOne
-    @JoinColumn(name = &quot;fk_author&quot;)
-    private Author author;
- 
-    ...
-}
-```
-Transaction: total 8681 per iteration 8.681
-Query: total 7797 per iteration 7.797
-
-''Selecting A DTO''
-
-Loading 100 Book entities took about 2ms. Let’s see if fetching the same data with a constructor expression in a JPQL query performs better.
-
-And you can, of course, also use constructor expressions in your Criteria queries.
-
-```
-long timeTx = 0;
-long timeQuery = 0;
-long iterations = 1000;
-// Perform 1000 iterations
-for (int i = 0; i &lt; iterations; i++) {
-    EntityManager em = emf.createEntityManager();
- 
-    long startTx = System.currentTimeMillis();
-    em.getTransaction().begin();
- 
-    // Execute the query
-    long startQuery = System.currentTimeMillis();
-    List&lt;BookValue&gt; books = em.createQuery(&quot;SELECT new org.thoughts.on.java.model.BookValue(b.id, b.title) FROM Book b&quot;).getResultList();
-    long endQuery = System.currentTimeMillis();
-    timeQuery += endQuery - startQuery;
- 
-    em.getTransaction().commit();
-    long endTx = System.currentTimeMillis();
- 
-    em.close();
- 
-    timeTx += endTx - startTx;
-}
-System.out.println(&quot;Transaction: total &quot; + timeTx + &quot; per iteration &quot; + timeTx / (double)iterations);
-System.out.println(&quot;Query: total &quot; + timeQuery + &quot; per iteration &quot; + timeQuery / (double)iterations);
-```
-As expected, the DTO projection performs much better than the entity projection.
-
-Transaction: total 1678 per iteration 1.678
-Query: total 1143 per iteration 1.143
-
-And in most projects, the performance improvement of the DTO projection will be even higher. It allows you to select the data that you need for your use case and not just all the attributes mapped by the entity. And selecting less data almost always results in a better performance.
-
-''Summary''
-
-Choosing the right projection for your use case is easier and more important than you might have thought.
-
-When you want to implement a write operation, you should use an entity as your projection. Hibernate will manage its state, and you just have to update its attributes within your business logic. Hibernate will then take care of the rest.
-
-You’ve seen the results of my small performance test. My laptop might not be the best environment to run these tests and it is definitely slower than your production environment. But the performance improvement is so big that it’s obvious which projection you should use.
-
-The query that used a DTO projection was ~40% faster than the one that selected entities. So, better spend the additional effort to create a DTO for your read-only operations and use it as the projection.
-
-And you should also make sure to use FetchType.LAZY for all associations. As you’ve seen in the test, even one eagerly fetched to-one association might triple the execution time of your query. So, better use FetchType.LAZY and initialize the relationships that you need for your use case.</pre>
-</div>
 <div created="20200829180827666" modified="20200829180845831" tags="JPA" title="Hibernate 1st Level Cache">
 <pre></pre>
 </div>
@@ -10409,27 +10080,6 @@ public class Post {
 <pre>Code:
 
 high-performance-java-persistence\core\src\test\java\com\vladmihalcea\book\hpjp\hibernate\association</pre>
-</div>
-<div created="20200910220024325" modified="20200910220053085" tags="Spring" title="Repository vs CrudRepository">
-<pre>From clinic-petstore:
-
-```
-public interface VisitRepository extends Repository&lt;Visit, Integer&gt; {
-    void save(Visit visit) throws DataAccessException;
-    List&lt;Visit&gt; findByPetId(Integer petId);
-}
-```
-Why/when to use CrudReposotory if Repository also works?
-
-See https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/repository/Repository.html:
-
-Domain repositories extending the Repository interface can selectively expose CRUD methods by simply declaring methods of the same signature as those declared in CrudRepository.
-
-Here, only two CrudRepository methods are exposed: save and findBy.
-</pre>
-</div>
-<div created="20200910215658872" modified="20200910215830805" tags="TableOfContents" title="Spring">
-<pre></pre>
 </div>
 <div caption="Contents" created="20200816194657786" list-before="$:/core/ui/SideBar/Open" modified="20200816195019121" tags="$:/tags/SideBar" title="TableOfContents">
 <pre>&lt;div class=&quot;tc-table-of-contents&quot;&gt;
