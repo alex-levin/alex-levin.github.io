@@ -9685,7 +9685,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20200910222633767" list="WebClient GettingStarted" modified="20200910222633767" title="$:/StoryList">
+<div created="20200910221750278" list="Spring WebClient Relationships GettingStarted" modified="20200910222131294" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -10643,7 +10643,7 @@ When a child entity is removed from the parent-side collection, Hibernate sets t
 foreign key column to null. Afterward, the orphan removal logic kicks in, and it triggers a
 delete statement against the disassociated child entity.</pre>
 </div>
-<div created="20200910222134547" modified="20200910222652079" tags="Spring" title="WebClient">
+<div created="20200910222134547" modified="20200910222241422" tags="Spring" title="WebClient">
 <pre>https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/
 
 Spring Boot creates and pre-configures a WebClient.Builder for you; it is strongly advised to inject it in your components and use it to create WebClient instances. Spring Boot is configuring that builder to share HTTP resources, reflect codecs setup in the same fashion as the server ones (see WebFlux HTTP codecs auto-configuration), and more.
@@ -10653,7 +10653,9 @@ The following code shows a typical example:
 ```
 @Service
 public class MyService {
+
     private final WebClient webClient;
+
     public MyService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl(&quot;https://example.org&quot;).build();
     }
