@@ -181,8 +181,6 @@ Error message and password prompt
 
 <li>$:/themes/tiddlywiki/vanilla/metrics/fontsize</li>
 
-<li>Avoid FetchType.EAGER strategy</li>
-
 <li>Bidirectional @OneToMany with @JoinColumn relationship</li>
 
 <li>Bidirectional @OneToMany with mappedBy attribute</li>
@@ -203,8 +201,6 @@ Error message and password prompt
 
 <li>Orphan Removal</li>
 
-<li>Persisting a ManyToOne association with JPA and Hibernate</li>
-
 <li>Relationships</li>
 
 <li>Repository vs CrudRepository</li>
@@ -216,8 +212,6 @@ Error message and password prompt
 <li>Unidirectional @OneToMany</li>
 
 <li>Unidirectional @OneToMany with @JoinColumn</li>
-
-<li>WebClient</li>
 
 </ul>
 </p>
@@ -9679,13 +9673,13 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div created="20200910215835941" modified="20200910215934413" title="$:/state/toc/TableOfContents-Spring--118161433">
 <pre>open</pre>
 </div>
-<div created="20200829173354775" modified="20200910221842069" title="$:/state/toc/TableOfContents/JPA-Relationships--118161433">
-<pre>open</pre>
+<div created="20200829173354775" modified="20200829194222919" title="$:/state/toc/TableOfContents/JPA-Relationships--118161433">
+<pre>close</pre>
 </div>
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20200910221750278" list="Spring WebClient Relationships GettingStarted" modified="20200910222131294" title="$:/StoryList">
+<div created="20200910215852356" list="Spring [[Repository vs CrudRepository]] [[Dependency Injection]] GettingStarted" modified="20200910215852356" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -9701,7 +9695,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
         },
         &quot;$:/info/url/full&quot;: {
             &quot;title&quot;: &quot;$:/info/url/full&quot;,
-            &quot;text&quot;: &quot;file:///C:/Users/Alex/Documents/Tiddly/alex-levin.github.io/index.html&quot;
+            &quot;text&quot;: &quot;file:///C:/Users/Alex/Documents/Tiddly/index.html&quot;
         },
         &quot;$:/info/url/host&quot;: {
             &quot;title&quot;: &quot;$:/info/url/host&quot;,
@@ -9721,7 +9715,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
         },
         &quot;$:/info/url/pathname&quot;: {
             &quot;title&quot;: &quot;$:/info/url/pathname&quot;,
-            &quot;text&quot;: &quot;/C:/Users/Alex/Documents/Tiddly/alex-levin.github.io/index.html&quot;
+            &quot;text&quot;: &quot;/C:/Users/Alex/Documents/Tiddly/index.html&quot;
         },
         &quot;$:/info/url/search&quot;: {
             &quot;title&quot;: &quot;$:/info/url/search&quot;,
@@ -9863,26 +9857,6 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 </div>
 <div created="20200816200705020" modified="20200829174106825" title="$:/themes/tiddlywiki/vanilla/metrics/fontsize">
 <pre>14x</pre>
-</div>
-<div created="20200910221918455" modified="20200910221942534" tags="Relationships" title="Avoid FetchType.EAGER strategy">
-<pre>```
-@Entity(name = &quot;PostComment&quot;)
-@Table(name = &quot;post_comment&quot;)
-public class PostComment {
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    private String review;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = &quot;post_id&quot;)
-    private Post post;
-}
-```
-The @JoinColumn annotation allows you to specify the Foreign Key column name. In our example, we can omit the @JoinColumn annotation since, by default, the Foreign Key column name is assumed to be formed by joining the @ManyToOne property (&quot;post&quot;) and the parent entity identifier (&quot;id&quot;) via the _ character (see JPA spec).
-
-Also, it’s very important to set the fetch strategy explicitly to ''FetchType.LAZY''. By default, @ManyToOne associations use the FetchType.EAGER strategy, which can lead to N+1 query issues or fetching more data than necessary.</pre>
 </div>
 <div created="20200816215131845" modified="20200816223749211" tags="Relationships" title="Bidirectional @OneToMany with @JoinColumn relationship">
 <pre>The @OneToMany with @JoinColumn association can also be turned into a bidirectional relationship,
@@ -10431,85 +10405,6 @@ public class Post {
 ```
 </pre>
 </div>
-<div created="20200910222022447" modified="20200910222049733" tags="Relationships" title="Persisting a ManyToOne association with JPA and Hibernate">
-<pre>```
-entityManager.persist(
-    new Post()
-        .setId(1L)
-        .setTitle(&quot;High-Performance Java Persistence&quot;)
-);
-```
-A common mistake developers do when persisting child entities is to fetch the parent entity using find:
-
-```
-Post post = postRepository.findById(1L);
- 
-commentRepository.save(
-    new PostComment()
-        .setId(1L)
-        .setReview(&quot;Amazing book!&quot;)
-        .setPost(post)
-);
-```
-When persisting the PostComment entity while using the find method, Hibernate will execute the following SQL statements:
-
-```
-SELECT
-    p.id AS id1_0_0_,
-    p.title AS title2_0_0_
-FROM post p
-WHERE p.id=1
- 
-INSERT INTO post_comment (
-    post_id,
-    review, id
-)
-VALUES (
-    1,
-    'Amazing book!',
-    1
-)
-```
-The SELECT query is not needed since we are not interested in fetching the Post entity. All we want is to set the post_id Foreign Key column.
-So, instead of find, you need to use getReference:
-
-```
-Post post = entityManager.getReference(Post.class, 1L);
- 
-entityManager.persist(
-    new PostComment()
-        .setId(1L)
-        .setReview(&quot;Amazing book!&quot;)
-        .setPost(post)
-);
-```
-Or, the getOne method if you’re using Spring Data JPA:
-
-```
-Post post = postRepository.getOne(1L);
-commentRepository.save(
-    new PostComment()
-        .setId(1L)
-        .setReview(&quot;Amazing book!&quot;)
-        .setPost(post)
-);
-```
-It’s unfortunate that the JpaRepository method is called getOne and not findProxyById, as it would be much easier for developers to guess its purpose.
-
-Now, Hibernate doesn’t need to execute the SELECT statement:
-
-```
-INSERT INTO post_comment (
-    post_id,
-    review, id
-)
-VALUES (
-    1,
-    'Amazing book!',
-    1
-)
-```</pre>
-</div>
 <div created="20200816223604805" modified="20200816223644523" tags="JPA" title="Relationships">
 <pre>Code:
 
@@ -10642,30 +10537,6 @@ Again, there is an additional update statement associated with the child removal
 When a child entity is removed from the parent-side collection, Hibernate sets the child table
 foreign key column to null. Afterward, the orphan removal logic kicks in, and it triggers a
 delete statement against the disassociated child entity.</pre>
-</div>
-<div created="20200910222134547" modified="20200910222241422" tags="Spring" title="WebClient">
-<pre>https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/
-
-Spring Boot creates and pre-configures a WebClient.Builder for you; it is strongly advised to inject it in your components and use it to create WebClient instances. Spring Boot is configuring that builder to share HTTP resources, reflect codecs setup in the same fashion as the server ones (see WebFlux HTTP codecs auto-configuration), and more.
-
-The following code shows a typical example:
-
-```
-@Service
-public class MyService {
-
-    private final WebClient webClient;
-
-    public MyService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl(&quot;https://example.org&quot;).build();
-    }
-
-    public Mono&lt;Details&gt; someRestCall(String name) {
-        return this.webClient.get().uri(&quot;/{name}/details&quot;, name)
-                        .retrieve().bodyToMono(Details.class);
-    }
-}
-```</pre>
 </div>
 
 
