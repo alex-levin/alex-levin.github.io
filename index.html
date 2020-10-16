@@ -191,6 +191,8 @@ Error message and password prompt
 
 <li>$:/themes/tiddlywiki/vanilla/metrics/fontsize</li>
 
+<li>1.3.1 Method references can be passed around</li>
+
 <li>Avoid FetchType.EAGER strategy</li>
 
 <li>Bidirectional @OneToMany with @JoinColumn relationship</li>
@@ -203,8 +205,6 @@ Error message and password prompt
 
 <li>Draft of 'Hibernate 1st Level Cache'</li>
 
-<li>Draft of 'Method references can be passed around'</li>
-
 <li>Entities or DTOs – When should you use which projection?</li>
 
 <li>Hibernate 1st Level Cache</li>
@@ -212,8 +212,6 @@ Error message and password prompt
 <li>JPA</li>
 
 <li>Mapping collections</li>
-
-<li>Method references can be passed around</li>
 
 <li>ModernJavaInAction</li>
 
@@ -9716,7 +9714,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20201016190510404" list="[[Draft of 'Method references can be passed around']] GettingStarted" modified="20201016190814456" title="$:/StoryList">
+<div created="20201016190510404" list="[[1.3.1 Method references can be passed around]] GettingStarted" modified="20201016190814456" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -9894,6 +9892,36 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 </div>
 <div created="20200816200705020" modified="20200829174106825" title="$:/themes/tiddlywiki/vanilla/metrics/fontsize">
 <pre>14x</pre>
+</div>
+<div created="20201016190515785" modified="20201016193532834" tags="ModernJavaInAction" title="1.3.1 Method references can be passed around">
+<pre>Old
+
+```
+File[] hiddenFiles = new File(&quot;.&quot;).listFiles(new FileFilter() {
+    public boolean accept(File file) {
+        return file.isHidden();                        1
+    }
+});
+```
+New
+
+```
+File[] hiddenFiles = new File(&quot;.&quot;).listFiles(File::isHidden);
+```
+File::isHidden is method reference
+
+```
+    public boolean isHidden() {
+        SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            security.checkRead(path);
+        }
+        if (isInvalid()) {
+            return false;
+        }
+        return ((fs.getBooleanAttributes(this) &amp; FileSystem.BA_HIDDEN) != 0);
+    }
+```</pre>
 </div>
 <div created="20200910221918455" modified="20200910221942534" tags="Relationships" title="Avoid FetchType.EAGER strategy">
 <pre>```
@@ -10178,36 +10206,6 @@ a.getBooks()
 ```
 * But not for any Query!</pre>
 </div>
-<div created="20201016190515785" draft.of="Method references can be passed around" draft.title="Method references can be passed around" modified="20201016193401518" tags="ModernJavaInAction" title="Draft of 'Method references can be passed around'">
-<pre>Old
-
-```
-File[] hiddenFiles = new File(&quot;.&quot;).listFiles(new FileFilter() {
-    public boolean accept(File file) {
-        return file.isHidden();                        1
-    }
-});
-```
-New
-
-```
-File[] hiddenFiles = new File(&quot;.&quot;).listFiles(File::isHidden);
-```
-File::isHidden is method reference
-
-```
-    public boolean isHidden() {
-        SecurityManager security = System.getSecurityManager();
-        if (security != null) {
-            security.checkRead(path);
-        }
-        if (isInvalid()) {
-            return false;
-        }
-        return ((fs.getBooleanAttributes(this) &amp; FileSystem.BA_HIDDEN) != 0);
-    }
-```</pre>
-</div>
 <div created="20200829190850874" modified="20200829192856128" tags="JPA" title="Entities or DTOs – When should you use which projection?">
 <pre>https://thorben-janssen.com/entities-dtos-use-projection/
 
@@ -10432,22 +10430,6 @@ the number of child records (or if there is even need to fetch child entities en
 is better to postpone the collection mapping decision.'' 
 
 For high-performance systems, a ''data access query is often a much more flexible alternative''. It also provides support for pagination of the child entities retrieved from the database.</pre>
-</div>
-<div created="20201016190515785" modified="20201016190838723" tags="ModernJavaInAction" title="Method references can be passed around">
-<pre>Old
-
-```
-File[] hiddenFiles = new File(&quot;.&quot;).listFiles(new FileFilter() {
-    public boolean accept(File file) {
-        return file.isHidden();                        1
-    }
-});
-```
-New
-
-```
-File[] hiddenFiles = new File(&quot;.&quot;).listFiles(File::isHidden);
-```</pre>
 </div>
 <div created="20201016134248484" modified="20201016134308130" tags="TableOfContents" title="ModernJavaInAction">
 <pre></pre>
