@@ -169,6 +169,8 @@ Error message and password prompt
 
 <li>$:/state/toc/TableOfContents-JPA--118161433</li>
 
+<li>$:/state/toc/TableOfContents-ModernJavaInAction--118161433</li>
+
 <li>$:/state/toc/TableOfContents-Spring--118161433</li>
 
 <li>$:/state/toc/TableOfContents/JPA-Relationships--118161433</li>
@@ -201,7 +203,7 @@ Error message and password prompt
 
 <li>Draft of 'Hibernate 1st Level Cache'</li>
 
-<li>Draft of 'New Tiddler'</li>
+<li>Draft of 'Method references can be passed around'</li>
 
 <li>Entities or DTOs – When should you use which projection?</li>
 
@@ -210,6 +212,8 @@ Error message and password prompt
 <li>JPA</li>
 
 <li>Mapping collections</li>
+
+<li>Method references can be passed around</li>
 
 <li>ModernJavaInAction</li>
 
@@ -9700,6 +9704,9 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div created="20200816200544448" modified="20200816200544448" title="$:/state/toc/TableOfContents-JPA--118161433">
 <pre>open</pre>
 </div>
+<div created="20201016190706535" modified="20201016190706535" title="$:/state/toc/TableOfContents-ModernJavaInAction--118161433">
+<pre>open</pre>
+</div>
 <div created="20200910215835941" modified="20200910215934413" title="$:/state/toc/TableOfContents-Spring--118161433">
 <pre>open</pre>
 </div>
@@ -9709,7 +9716,7 @@ INSERT INTO post_comment (post_id, review, id) VALUES (1, 'My review', 2)
 <div title="$:/status/RequireReloadDueToPluginChange">
 <pre>no</pre>
 </div>
-<div created="20201016190510404" list="ModernJavaInAction [[Draft of 'New Tiddler']] GettingStarted" modified="20201016190510404" title="$:/StoryList">
+<div created="20201016190510404" list="[[Draft of 'Method references can be passed around']] GettingStarted" modified="20201016190718615" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -10171,8 +10178,9 @@ a.getBooks()
 ```
 * But not for any Query!</pre>
 </div>
-<div created="20201016190515785" draft.of="New Tiddler" draft.title="Method references can be passed around" modified="20201016190638604" tags="ModernJavaInAction" title="Draft of 'New Tiddler'">
+<div created="20201016190515785" draft.of="Method references can be passed around" draft.title="Method references can be passed around" modified="20201016190752681" tags="ModernJavaInAction" title="Draft of 'Method references can be passed around'">
 <pre>Old:
+
 ```
 File[] hiddenFiles = new File(&quot;.&quot;).listFiles(new FileFilter() {
     public boolean accept(File file) {
@@ -10181,6 +10189,7 @@ File[] hiddenFiles = new File(&quot;.&quot;).listFiles(new FileFilter() {
 });
 ```
 New:
+
 ```
 File[] hiddenFiles = new File(&quot;.&quot;).listFiles(File::isHidden);
 ```</pre>
@@ -10409,6 +10418,20 @@ the number of child records (or if there is even need to fetch child entities en
 is better to postpone the collection mapping decision.'' 
 
 For high-performance systems, a ''data access query is often a much more flexible alternative''. It also provides support for pagination of the child entities retrieved from the database.</pre>
+</div>
+<div created="20201016190515785" modified="20201016190708719" tags="ModernJavaInAction" title="Method references can be passed around">
+<pre>Old:
+```
+File[] hiddenFiles = new File(&quot;.&quot;).listFiles(new FileFilter() {
+    public boolean accept(File file) {
+        return file.isHidden();                        1
+    }
+});
+```
+New:
+```
+File[] hiddenFiles = new File(&quot;.&quot;).listFiles(File::isHidden);
+```</pre>
 </div>
 <div created="20201016134248484" modified="20201016134308130" tags="TableOfContents" title="ModernJavaInAction">
 <pre></pre>
